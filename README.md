@@ -168,7 +168,7 @@ throughput of ~50k log events per second.
 ### Setting up
 ```bash
 git clone https://github.com/remen/node-simple-logstash-logger
-cd node-simple-logstash-logger
+cd simple-logstash-logger
 npm install
 ```
 
