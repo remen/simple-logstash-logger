@@ -162,17 +162,3 @@ incoming http requests.
 In practice, this should only be a problem if you are logging a *lot* of events.
 A small throughput test when redirecting to file on a modern laptop yielded a
 throughput of ~50k log events per second.
-
-## Development Guide
-
-### Setting up
-```bash
-git clone https://github.com/remen/node-simple-logstash-logger
-cd simple-logstash-logger
-npm install
-```
-
-### Running tests
-```bash
-npm test
-```
