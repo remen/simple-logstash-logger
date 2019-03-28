@@ -29,14 +29,17 @@ describe('simple-logstash-logger', () => {
     Object.assign(LoggerConfig, defaultLoggerConfig);
   });
 
-  /**
-   * @param logEvent {Object<string, any>}
-   */
+  /** @param logEvent {Object<string, any>} */
+  function expectBasicFieldsWithMessage(logEvent) {
+    expectBasicFields(logEvent);
+    expect(logEvent.message).toStrictEqual(message);
+  }
+
+  /** @param logEvent {Object<string, any>} */
   function expectBasicFields(logEvent) {
     expect(logEvent['@timestamp']).toStrictEqual('2018-01-02T03:04:05.678Z');
     expect(logEvent['@version']).toStrictEqual(1);
     expect(logEvent.level).toStrictEqual('INFO');
-    expect(logEvent.message).toStrictEqual(message);
   }
 
   describe('createLogEvent(INFO, message)', () => {
@@ -48,7 +51,37 @@ describe('simple-logstash-logger', () => {
     });
 
     it('sets all basic fields (@timestamp, @version, level & message)', () => {
+      expectBasicFieldsWithMessage(logEvent);
+    });
+  });
+
+  describe('createLogEvent(INFO, context)', () => {
+    /** @type {Object<string,any>} */
+    let logEvent;
+
+    beforeEach(() => {
+      logEvent = createLogger().createLogEvent(LogLevel.INFO, {msg: message});
+    });
+
+    it('sets all basic fields (@timestamp, @version & level)', () => {
       expectBasicFields(logEvent);
+      expect(logEvent.msg).toStrictEqual(message);
+    });
+  });
+
+  describe('createLogEvent(INFO, context, error)', () => {
+    /** @type {Object<string,any>} */
+    let logEvent;
+    const error = new Error("This was unexpected");
+
+    beforeEach(() => {
+      logEvent = createLogger().createLogEvent(LogLevel.INFO, {msg: message}, error);
+    });
+
+    it('sets all basic fields (@timestamp, @version & level)', () => {
+      expectBasicFields(logEvent);
+      expect(logEvent.msg).toStrictEqual(message);
+      expect(logEvent.stackTrace).toEqual(error.stack);
     });
   });
 
@@ -62,7 +95,7 @@ describe('simple-logstash-logger', () => {
     });
 
     it('sets all basic fields (@timestamp, @version, level & message)', () => {
-      expectBasicFields(logEvent);
+      expectBasicFieldsWithMessage(logEvent);
     });
 
     it('sets stackTrace', () => {
@@ -83,7 +116,7 @@ describe('simple-logstash-logger', () => {
     });
 
     it('sets all basic fields (@timestamp, @version, level & message)', () => {
-      expectBasicFields(logEvent);
+      expectBasicFieldsWithMessage(logEvent);
     });
 
     it('sets properties from context', () => {
@@ -106,7 +139,7 @@ describe('simple-logstash-logger', () => {
     });
 
     it('sets all basic fields (@timestamp, @version, level & message)', () => {
-      expectBasicFields(logEvent);
+      expectBasicFieldsWithMessage(logEvent);
     });
 
     it('sets properties from context', () => {

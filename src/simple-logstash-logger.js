@@ -57,14 +57,14 @@ function createLogger(fileOrContext, context) {
 
   if (!fileOrContext) {
     newContext = {}
-  } else if (fileOrContext instanceof Object) {
-    newContext = {
-      ...fileOrContext,
-    };
-  } else {
+  } else if (typeof fileOrContext === 'string') {
     newContext = {
       file: path.relative('', fileOrContext),
       ...context,
+    };
+  } else {
+    newContext = {
+      ...fileOrContext,
     };
   }
 
@@ -80,61 +80,61 @@ function createLogger(fileOrContext, context) {
  */
 function Logger(context, config) {
   /**
-   * @param {string} message
+   * @param {string | Object<string, any>} messageOrContext
    * @param {Error | Object} [errOrContext]
    * @param {Error} [err]
    */
-  this.trace = (message, errOrContext, err) => {
-    this.log(LogLevel.TRACE, message, errOrContext, err);
+  this.trace = (messageOrContext, errOrContext, err) => {
+    this.log(LogLevel.TRACE, messageOrContext, errOrContext, err);
   };
 
   /**
-   * @param {string} message
+   * @param {string | Object<string, any>} messageOrContext
    * @param {Error | Object} [errOrContext]
    * @param {Error} [err]
    */
-  this.debug = (message, errOrContext, err) => {
-    this.log(LogLevel.DEBUG, message, errOrContext, err);
+  this.debug = (messageOrContext, errOrContext, err) => {
+    this.log(LogLevel.DEBUG, messageOrContext, errOrContext, err);
   };
 
   /**
-   * @param {string} message
+   * @param {string | Object<string, any>} messageOrContext
    * @param {Error | Object} [errOrContext]
    * @param {Error} [err]
    */
-  this.info = (message, errOrContext, err) => {
-    this.log(LogLevel.INFO, message, errOrContext, err);
+  this.info = (messageOrContext, errOrContext, err) => {
+    this.log(LogLevel.INFO, messageOrContext, errOrContext, err);
   };
 
   /**
-   * @param {string} message
+   * @param {string | Object<string, any>} messageOrContext
    * @param {Error | Object} [errOrContext]
    * @param {Error} [err]
    */
-  this.warn = (message, errOrContext, err) => {
-    this.log(LogLevel.WARN, message, errOrContext, err);
+  this.warn = (messageOrContext, errOrContext, err) => {
+    this.log(LogLevel.WARN, messageOrContext, errOrContext, err);
   };
 
   /**
-   * @param {string} message
+   * @param {string | Object<string, any>} messageOrContext
    * @param {Error | Object} [errOrContext]
    * @param {Error} [err]
    */
-  this.error = (message, errOrContext, err) => {
-    this.log(LogLevel.ERROR, message, errOrContext, err);
+  this.error = (messageOrContext, errOrContext, err) => {
+    this.log(LogLevel.ERROR, messageOrContext, errOrContext, err);
   };
 
   /**
    * @param {LogLevel} level
-   * @param {string} message
+   * @param {string | Object<string, any>} messageOrContext
    * @param {Error | Object} [errOrContext]
    * @param {Error} [err]
    */
-  this.log = (level, message, errOrContext, err) => {
+  this.log = (level, messageOrContext, errOrContext, err) => {
     if (level < config.level) {
       return;
     }
-    const logEvent = this.createLogEvent(level, message, errOrContext, err);
+    const logEvent = this.createLogEvent(level, messageOrContext, errOrContext, err);
     switch (config.format) {
       case LogFormat.YAML:
         write('---\n' + yaml.safeDump(logEvent, { skipInvalid: true }));
@@ -147,27 +147,32 @@ function Logger(context, config) {
 
   /**
    * @callback LoggerFunction
-   * @param {string} message
+   * @param {string | Object<string, any>} messageOrContext
    * @param {Error | Object} [errOrContext]
    * @param {Error} [err]
    */
 
   /**
    * @param {LogLevel} level
-   * @param {string} message
-   * @param {Error | Object} [errOrContext]
+   * @param {string | Object<string, any>} messageOrContext
+   * @param {Error | Object<string, any>} [errOrContext]
    * @param {Error} [err]
    * @returns {Object<string, any>}
    */
-  this.createLogEvent = function createLogEvent(level, message, errOrContext, err) {
+  this.createLogEvent = function createLogEvent(level, messageOrContext, errOrContext, err) {
     const logEvent = {
       '@timestamp': new Date().toISOString(),
       '@version': 1,
       level: LogLevelNames[level],
       ...config.context,
       ...context,
-      message,
     };
+
+    if (typeof messageOrContext === 'string') {
+      logEvent.message = messageOrContext;
+    } else {
+      Object.assign(logEvent, messageOrContext);
+    }
 
     if (errOrContext) {
       if (errOrContext instanceof Error) {
