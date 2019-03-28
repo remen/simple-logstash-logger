@@ -2,16 +2,18 @@
   "name": "simple-logstash-logger",
   "version": "0.2.0",
   "description": "A simple logger for outputting logstash json or yaml to stdout",
-  "main": "dist/index.js",
+  "main": "src/simple-logstash-logger.js",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "build": "tsc",
-    "lint": "tslint -p tsconfig.json",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch --coverage"
+    "prepublish": "npm test",
+    "test": "npm run test:ts-check && npm run test:lint && npm run test:jest",
+    "test:lint": "tslint -p tsconfig.json",
+    "test:ts-check": "tsc --pretty",
+    "test:jest": "jest --coverage",
+    "test:jest:watch": "jest --watch --coverage"
   },
   "files": [
-    "lib/**/*"
+    "src/**/*"
   ],
   "repository": {
     "type": "git",
