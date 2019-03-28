@@ -1,6 +1,6 @@
 {
   "name": "simple-logstash-logger",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A simple logger for outputting logstash json or yaml to stdout",
   "main": "src/simple-logstash-logger.js",
   "scripts": {
