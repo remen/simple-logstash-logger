@@ -5,7 +5,7 @@
   "main": "src/simple-logstash-logger.js",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "prepublish": "npm test",
+    "prepublishOnly": "npm test",
     "test": "npm run test:ts-check && npm run test:lint && npm run test:jest",
     "test:lint": "tslint -p tsconfig.json",
     "test:ts-check": "tsc --pretty",
