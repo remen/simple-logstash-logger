@@ -160,6 +160,7 @@ function Logger(context, config) {
    * @returns {Object<string, any>}
    */
   this.createLogEvent = function createLogEvent(level, messageOrContext, errOrContext, err) {
+    /** @type{any} */
     const logEvent = {
       '@timestamp': new Date().toISOString(),
       '@version': 1,
