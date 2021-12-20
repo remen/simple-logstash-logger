@@ -28,7 +28,7 @@ const LogLevelNames = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR'];
 
 /**
  * @typedef {Object} ILoggerConfig
- * @property {object} context
+ * @property {any} context
  * @property {LogFormat} format
  * @property {LogLevel} level
  * @property {(function(string): *)} write
@@ -137,7 +137,7 @@ function Logger(context, config) {
     const logEvent = this.createLogEvent(level, messageOrContext, errOrContext, err);
     switch (config.format) {
       case LogFormat.YAML:
-        write('---\n' + yaml.safeDump(logEvent, { skipInvalid: true }));
+        write('---\n' + yaml.dump(logEvent, { skipInvalid: true }));
         break;
       case LogFormat.JSON:
         write(JSON.stringify(logEvent) + '\n');

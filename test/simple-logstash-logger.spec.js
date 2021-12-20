@@ -218,6 +218,7 @@ describe('simple-logstash-logger', () => {
   it('can output in yaml format', () => {
     LoggerConfig.format = LogFormat.YAML;
     createLogger().info(message);
+    /** @type{any} */
     const parsedOutput = yaml.load(output);
     expect(parsedOutput['@timestamp']).toStrictEqual('2018-01-02T03:04:05.678Z');
   });
